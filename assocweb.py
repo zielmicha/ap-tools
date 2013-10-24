@@ -3,6 +3,16 @@ import cgi
 import json
 app = Flask(__name__)
 
+mac_table = {}
+try:
+    with open('/usr/share/wireshark/manuf') as f:
+        for line in f:
+            a = line.split()
+            if len(a) < 2: continue
+            mac_table[a[0]] = a[1]
+except IOError as err:
+    print 'failed to read DB', err
+
 @app.route("/")
 def hello():
     return open('static/index.html').read()
@@ -10,6 +20,11 @@ def hello():
 @app.route("/stations.json")
 def stations():
     return open('stations.html').read()
+
+def pp_mac(mac):
+    vendor = mac[:8]
+    rest = mac[8:]
+    return mac_table.get(vendor, vendor) + rest
 
 @app.route("/stations.html")
 def stationshtml():
@@ -20,8 +35,10 @@ def stationshtml():
     for col in cols:
         out.append('<th>%s' % col)
     data = json.load(open('stations.json'))
-    data.sort(key=lambda data:
-              (data['mac'], data['ap']))
+    for item in data:
+        item['mac'] = pp_mac(item['mac'])
+    data.sort(key=lambda d:
+              (d['mac'], d['ap']))
     for item in data:
         out.append('<tr>')
         for col in cols:
