@@ -4,7 +4,7 @@ import multiprocessing
 import sys
 import pipes
 
-ips = [ '192.168.0.%d' % i for i in xrange(33, 38) ]
+ips = [ '192.168.0.%d' % i for i in range(33, 38) + [44, 45]]
 password = open(os.path.expanduser('~/.wappassword')).read().strip()
 
 def do_cmd(ip):
