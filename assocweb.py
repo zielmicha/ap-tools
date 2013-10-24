@@ -21,10 +21,17 @@ def hello():
 def stations():
     return open('stations.html').read()
 
+def find_vendor(mac):
+    for i in reversed(range(len(mac))):
+        addr = mac_table.get(mac[:i])
+        if addr:
+            return addr
+
 def pp_mac(mac):
-    vendor = mac[:8]
-    rest = mac[8:]
-    return mac_table.get(vendor, vendor) + rest
+    description = find_vendor(mac) or ''
+    if description:
+        description = ' (%s)' % description
+    return mac + description
 
 @app.route("/stations.html")
 def stationshtml():
