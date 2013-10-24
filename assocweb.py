@@ -19,7 +19,10 @@ def stationshtml():
     out.append('<tr>')
     for col in cols:
         out.append('<th>%s' % col)
-    for item in json.load(open('stations.json')):
+    data = json.load(open('stations.json'))
+    data.sort(key=lambda data:
+              (data['mac'], data['ap']))
+    for item in data:
         out.append('<tr>')
         for col in cols:
             out.append('<td>%s' % cgi.escape(str(item[col])))
